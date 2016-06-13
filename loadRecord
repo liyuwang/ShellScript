@@ -1,0 +1,13 @@
+#! /bin/bash
+
+#运行时间:(单位是分钟)
+time=30
+
+for ((i=0; i<`expr $time / 5`; i++)); do
+  if [ $i -eq 0 ]; then
+    top -n1 -b | grep "load average" > load.record;
+  else
+    sleep 300;
+    top -n1 -b | grep "load average" >> load.record;
+  fi
+done
