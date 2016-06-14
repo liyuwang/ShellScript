@@ -1,15 +1,43 @@
-! /bin/sh
+#! /bin/sh
 
+#下载具体日期的log:
 logname="access.`date +%Y'-'%m'-'%d -d '-1 day'`.log.gz"
+#处理后的log格式,接受的值有:apidiff,beta,online
+logtype=beta
+
 logDownload(){
-  rm ./*.log.gz ./*.log
-  scp liyu.wang@l-c6.vc.cn6:/home/q/www/vacation-api/logs/$logname ./
+    rm ./*.log.gz ./*.log
+    scp liyu.wang@l-c6.vc.cn6:/home/q/www/vacation-api/logs/$logname ./
 }
 
 logHandle(){
-  awk
+    zcat ./$logname | awk '$9 == 200 && $6 == "\"GET" && $7 !~ "healthcheck" {print $7}' | awk '!a[$0]++' > api.log.tmp
+    if [[ $logtype == "apidiff" ]]; then
+        mv api.log.tmp  api.log
+    elif [[ $logtype == "beta" ]]; then
+        awk '{print "l-vc7.vc.beta.cn0.qunar.com:8092"$0}' api.log.tmp > api.log
+        rm api.log.tmp
+    elif [[ $logtype == "online" ]]; then
+        sed 's/\/api/dujia.qunar.com\/golfz/' api.log.tmp > api.log
+        rm api.log.tmp
+    fi
 }
 
+logVisit(){
+    ok=0
+    sum=0
+    while read line; do
+        ((sum++))
+        HTTP_CODE=`curl -o /dev/null -s -w "%{http_code}" -g $line`
+        if [[ $HTTP_CODE -eq "200" ]]; then
+            ((ok++))
+            echo "$ok/$sum: $HTTP_CODE" 
+        else
+            echo "$ok/$sum: $HTTP_CODE Error: $line"
+        fi
+    done < api.log
+}
 
-#logDownload
+logDownload
 logHandle
+logVisit
