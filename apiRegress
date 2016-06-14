@@ -1,0 +1,15 @@
+! /bin/sh
+
+logname="access.`date +%Y'-'%m'-'%d -d '-1 day'`.log.gz"
+logDownload(){
+  rm ./*.log.gz ./*.log
+  scp liyu.wang@l-c6.vc.cn6:/home/q/www/vacation-api/logs/$logname ./
+}
+
+logHandle(){
+  awk
+}
+
+
+#logDownload
+logHandle
