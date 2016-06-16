@@ -7,7 +7,7 @@ logtype=beta
 
 logDownload(){
     rm ./*.log.gz ./*.log
-    scp liyu.wang@l-c6.vc.cn6:/home/q/www/vacation-api/logs/$logname ./
+    scp liyu.wang@xxx:/home/q/www/vacation-api/logs/$logname ./
 }
 
 logHandle(){
@@ -15,10 +15,10 @@ logHandle(){
     if [[ $logtype == "apidiff" ]]; then
         mv api.log.tmp  api.log
     elif [[ $logtype == "beta" ]]; then
-        awk '{print "l-vc7.vc.beta.cn0.qunar.com:8092"$0}' api.log.tmp > api.log
+        awk '{print "xxx"$0}' api.log.tmp > api.log
         rm api.log.tmp
     elif [[ $logtype == "online" ]]; then
-        sed 's/\/api/dujia.qunar.com\/golfz/' api.log.tmp > api.log
+        sed 's/\/api/xxx\/golfz/' api.log.tmp > api.log
         rm api.log.tmp
     fi
 }
